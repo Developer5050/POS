@@ -12,6 +12,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+  console.log(sidebarCollapsed);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -25,7 +26,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         <Navbar onMenuClick={toggleSidebar} collapsed={sidebarCollapsed} />
 
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto pt-20">
           {children}
         </main>
       </div>
