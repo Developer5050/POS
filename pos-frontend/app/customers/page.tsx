@@ -96,12 +96,12 @@ export default function Customers() {
 
             <div className="stat-card overflow-x-auto bg-white shadow rounded-lg mt-5">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-[#27AA83] h-[38px]">
+                    <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
                         <tr>
                             {['name', 'phone', 'email', 'address', 'totalOrders', 'totalPurchase'].map((col) => (
                                 <th
                                     key={col}
-                                    className="px-4 py-2 text-left text-xs font-medium text-white uppercase cursor-pointer select-none"
+                                    className="py-3 px-3 text-left font-semibold cursor-pointer select-none"
                                     onClick={() => requestSort(col as keyof Customer)}
                                 >
                                     <div className="flex items-center gap-1">
@@ -124,7 +124,7 @@ export default function Customers() {
                                     </div>
                                 </th>
                             ))}
-                            <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase">Actions</th>
+                            <th className="py-3 px-3 text-left font-semibold">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 mt-2">

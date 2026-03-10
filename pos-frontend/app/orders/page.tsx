@@ -1,12 +1,15 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Minus, X, ShoppingCart } from 'lucide-react';
+import { Search, Plus, Minus } from 'lucide-react';
+import { IoCartOutline } from "react-icons/io5";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { products as allProducts, customers as allCustomers, type OrderItem } from '@/data/mockdata';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function NewOrder() {
   const [prodSearch, setProdSearch] = useState('');
@@ -57,62 +60,150 @@ export default function NewOrder() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <div className="page-header">
-        <h1 className="page-title">New Order</h1>
+        <h1 className="page-title text-[18px] font-bold mt-1">New Order</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
         {/* Left: Products */}
         <div>
-          <div className="mb-4 relative">
+          <div className="mb-4 relative mt-3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input className="search-input w-full pl-10" placeholder="Search products..." value={prodSearch} onChange={e => setProdSearch(e.target.value)} />
+            <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search products..." value={prodSearch} onChange={e => setProdSearch(e.target.value)} />
           </div>
 
-          {/* Product grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-            {filteredProducts.map(p => (
-              <button
-                key={p.id}
-                onClick={() => addToCart(p.id, p.name, p.salePrice)}
-                className="stat-card text-left hover:border-primary/40 transition-colors cursor-pointer"
-              >
-                <p className="text-sm font-medium truncate">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.category}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm font-bold text-primary">${p.salePrice}</span>
-                  <span className="text-xs text-muted-foreground">Stock: {p.stock}</span>
-                </div>
-              </button>
-            ))}
+          {/* Products Table */}
+          <div className="stat-card overflow-x-auto bg-white rounded-lg border border-zinc-200 mb-4">
+            <table className="w-full text-sm">
+
+              {/* Table Header */}
+              <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
+                <tr>
+                  <th className="py-3 px-3 text-left font-semibold rounded-tl-lg">Product</th>
+                  <th className="py-3 px-3 text-left font-semibold">Category</th>
+                    <th className="py-3 px-3 text-left font-semibold">Price</th>
+                    <th className="py-3 px-3 text-left font-semibold">Stock</th>
+                  <th className="py-3 px-3 text-left font-semibold rounded-tr-lg">Action</th>
+                </tr>
+              </thead>
+
+              {/* Table Body */}
+              <tbody>
+                {filteredProducts.map((p) => (
+                  <tr
+                    key={p.id}
+                    className="border-b border-zinc-200 hover:bg-zinc-50 transition"
+                  >
+                    <td className="py-3 px-3">{p.name}</td>
+
+                    <td className="py-3 px-3 text-zinc-500">
+                      {p.category}
+                    </td>
+
+                    <td className="py-3 px-3 font-medium">
+                      ${p.salePrice}
+                    </td>
+
+                    <td className="py-3 px-3">
+                      {p.stock}
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <button
+                        onClick={() => addToCart(p.id, p.name, p.salePrice)}
+                        className="px-3 py-1 text-xs bg-[#27AA83] text-white rounded-md hover:bg-[#219a75] cursor-pointer"
+                      >
+                        Add
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </table>
           </div>
 
           {/* Cart */}
-          <div className="stat-card">
+          <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-200 dark:border-zinc-700">
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <ShoppingCart className="w-4 h-4" /> Cart ({cart.length} items)
+              <IoCartOutline className="w-4 h-4" /> Cart ({cart.length} items)
             </h3>
+
             {cart.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-6">No items in cart</p>
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No items in cart
+              </p>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {cart.map(item => (
-                  <div key={item.productId} className="flex items-center justify-between py-2 border-b border-border/50">
+                  <div
+                    key={item.productId}
+                    className="flex items-center justify-between p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800 transition border-b border-zinc-200 dark:border-zinc-700"
+                  >
+                    {/* Product Info */}
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{item.productName}</p>
-                      <p className="text-xs text-muted-foreground">${item.price} each</p>
+                      <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-200">
+                        {item.productName}
+                      </p>
+                      {/* <p className="text-xs text-muted-foreground mt-0.5">
+                        ${item.price} each
+                      </p> */}
                     </div>
+
+                    {/* Qty Controls */}
                     <div className="flex items-center gap-2">
-                      <button onClick={() => updateQty(item.productId, -1)} className="w-7 h-7 rounded-md bg-muted flex items-center justify-center hover:bg-muted/80"><Minus className="w-3 h-3" /></button>
-                      <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                      <button onClick={() => updateQty(item.productId, 1)} className="w-7 h-7 rounded-md bg-muted flex items-center justify-center hover:bg-muted/80"><Plus className="w-3 h-3" /></button>
-                      <span className="w-16 text-right text-sm font-semibold">${item.total.toFixed(2)}</span>
-                      <button onClick={() => removeFromCart(item.productId)} className="p-1 hover:bg-muted rounded"><X className="w-3.5 h-3.5 text-destructive" /></button>
+
+                      <button
+                        onClick={() => updateQty(item.productId, -1)}
+                        className="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center hover:bg-zinc-100 transition cursor-pointer"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+
+                      <span className="w-8 text-center text-sm font-medium">
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        onClick={() => updateQty(item.productId, 1)}
+                        className="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center hover:bg-zinc-100 transition cursor-pointer"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+
+                      {/* Item Total */}
+                      <span className="w-16 text-right text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                        ${item.total.toFixed(2)}
+                      </span>
+
+                      {/* Remove */}
+                      <button
+                        onClick={() => removeFromCart(item.productId)}
+                        className="p-1.5 rounded-md hover:bg-red-50 transition cursor-pointer"
+                      >
+                        <TooltipProvider>
+                             <Tooltip>
+                                 <TooltipTrigger asChild>
+                                      <RiDeleteBinLine className="w-4 h-4 text-red-500" />
+                                  </TooltipTrigger>
+                                  <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">Delete Item
+                                    </TooltipContent>
+                              </Tooltip>
+                        </TooltipProvider>
+                      </button>
+
                     </div>
                   </div>
                 ))}
-                <div className="flex justify-between pt-2 text-lg font-bold">
-                  <span>Grand Total</span>
-                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
+
+                {/* Total */}
+                <div className="flex justify-between items-center pt-3 mt-2 border-t border-zinc-200 dark:border-zinc-700">
+                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                    Grand Total
+                  </span>
+
+                  <span className="text-lg font-bold text-[#27AA83]">
+                    ${grandTotal.toFixed(2)}
+                  </span>
                 </div>
               </div>
             )}
@@ -121,42 +212,84 @@ export default function NewOrder() {
 
         {/* Right: Customer & Order Info */}
         <div className="space-y-4">
-          <div className="stat-card">
-            <h3 className="text-sm font-semibold mb-3">Customer</h3>
+          <div className="stat-card mt-3.5 bg-white dark:bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-200 dark:border-zinc-700">
+            <h3 className="text-[15px] font-semibold mb-3">Customer</h3>
+
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input className="search-input w-full pl-10" placeholder="Search customer..." value={custSearch} onChange={e => setCustSearch(e.target.value)} />
+
+              <input
+                className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2"
+                placeholder="Search customer..."
+                value={custSearch}
+                onChange={e => setCustSearch(e.target.value)}
+              />
             </div>
+
             <div className="space-y-1 max-h-[180px] overflow-y-auto">
               {filteredCustomers.map(c => (
                 <button
                   key={c.id}
                   onClick={() => setSelectedCustomer(c.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedCustomer === c.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedCustomer === c.id
+                    ? 'bg-[#27AA83] text-white'
+                    : 'hover:bg-zinc-100'
+                    }`}
                 >
                   <p className="font-medium">{c.name}</p>
-                  <p className={`text-xs ${selectedCustomer === c.id ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>{c.phone}</p>
+                  <p
+                    className={`text-xs ${selectedCustomer === c.id
+                      ? 'text-white/80'
+                      : 'text-muted-foreground'
+                      }`}
+                  >
+                    {c.phone}
+                  </p>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="stat-card space-y-3">
-            <h3 className="text-sm font-semibold">Order Details</h3>
-            <div><Label>DC No</Label><Input value={dcNo} onChange={e => setDcNo(e.target.value)} placeholder="Delivery Challan No" /></div>
-            <div><Label>PO No</Label><Input value={poNo} onChange={e => setPoNo(e.target.value)} placeholder="Purchase Order No" /></div>
+          <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-200 dark:border-zinc-700 space-y-3 mt-3">
+            <h3 className="text-[15px] font-semibold">Order Details</h3>
+
+            <div>
+              <Label>DC No</Label>
+              <Input
+                value={dcNo}
+                onChange={e => setDcNo(e.target.value)}
+                placeholder="Delivery Challan No"
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] rounded-lg"
+              />
+            </div>
+
+            <div>
+              <Label>PO No</Label>
+              <Input
+                value={poNo}
+                onChange={e => setPoNo(e.target.value)}
+                placeholder="Purchase Order No"
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] rounded-lg"
+              />
+            </div>
           </div>
 
-          <div className="stat-card">
-            <div className="flex justify-between text-sm mb-2">
+          <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-200 dark:border-zinc-700 mt-3">
+            <div className="flex justify-between text-[13px] mb-2">
               <span className="text-muted-foreground">Subtotal</span>
               <span>${grandTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-lg font-bold border-t pt-2">
+
+            <div className="flex justify-between text-[13px] font-bold border-t border-zinc-200 dark:border-zinc-700 pt-2">
               <span>Grand Total</span>
-              <span className="text-primary">${grandTotal.toFixed(2)}</span>
+              <span className="text-[#27AA83]">${grandTotal.toFixed(2)}</span>
             </div>
-            <Button className="w-full mt-4" onClick={saveOrder} disabled={cart.length === 0}>
+
+            <Button
+              className="w-full mt-4 bg-[#27AA83] hover:bg-[#219a75] text-white"
+              onClick={saveOrder}
+              disabled={cart.length === 0}
+            >
               Save Order & Generate Invoice
             </Button>
           </div>

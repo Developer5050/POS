@@ -167,7 +167,7 @@ export default function Dashboard() {
                 {['invoiceNo', 'customerName', 'date', 'total', 'status'].map((col) => (
                   <th
                     key={col}
-                    className={`py-3 text-left font-semibold ${col === 'invoiceNo' ? 'rounded-tl-lg px-0.5' : ''} ${col === 'status' ? 'rounded-tr-lg' : ''} cursor-pointer select-none`}
+                    className={`py-3 text-left font-semibold ${col === 'invoiceNo' ? 'rounded-tl-lg px-2' : ''} ${col === 'status' ? 'rounded-tr-lg' : ''} cursor-pointer select-none`}
                     onClick={() => requestSort(col as keyof typeof orders[0])}
                   >
                     <div className="flex items-center gap-1">
@@ -193,26 +193,26 @@ export default function Dashboard() {
             </thead>
 
             {/* Table Body */}
-            <tbody className="-ml-1">
+            <tbody>
               {sortedOrders.slice(0, 5).map((o: typeof orders[0]) => (
                 <tr key={o.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
-                  <td className="py-3 font-mono text-xs">{o.invoiceNo}</td>
+                  <td className="py-3 px-2 font-medium text-xs">{o.invoiceNo}</td>
                   <td className="py-3">{o.customerName}</td>
                   <td className="py-3 text-zinc-500">{new Date(o.date).toLocaleDateString()}</td>
-                  <td className="py-3 font-semibold">${o.total.toLocaleString()}</td>
+                  <td className="py-3 font-medium">${o.total.toLocaleString()}</td>
                   <td className="py-3">
                     {o.status === "paid" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-orange-100 text-orange-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-orange-200 text-orange-600">
                         paid
                       </span>
                     )}
                     {o.status === "overdue" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-red-100 text-red-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-red-200 text-red-600">
                         overdue
                       </span>
                     )}
                     {o.status === "pending" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-green-100 text-green-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-green-200 text-green-600">
                         pending
                       </span>
                     )}

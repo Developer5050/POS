@@ -39,7 +39,6 @@ export default function Products() {
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
 
 
-
     const filteredProducts = productsList.filter(p =>
         (selectedCat === 'All' || p.category === selectedCat) &&
         p.name.toLowerCase().includes(search.toLowerCase())
@@ -65,7 +64,6 @@ export default function Products() {
         if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
         setSortConfig({ key, direction });
     };
-
 
 
     const openNewProduct = () => {
@@ -233,13 +231,13 @@ export default function Products() {
                     {/* Products Table */}
                     <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-2 mt-3 shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-x-auto">
                         <table className="w-full min-w-[600px] text-sm text-left">
-                            <thead className="bg-[#27AA83] h-[38px]">
+                            <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
                                 <tr>
                                     {['name', 'category', 'purchasePrice', 'salePrice', 'stock'].map((col, idx, arr) => (
                                         <th
                                             key={col}
                                             className={`
-                    px-3 py-2 cursor-pointer select-none text-white text-xs font-medium uppercase
+                    py-3 px-3 text-left font-semibold cursor-pointer select-none
                     ${idx === 0 ? 'rounded-tl-lg' : ''} 
                     ${idx === arr.length - 1 ? '' : ''}
                 `}
@@ -265,18 +263,18 @@ export default function Products() {
                                             </div>
                                         </th>
                                     ))}
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase rounded-tr-lg">Actions</th>
+                                    <th className="py-3 px-3 text-left font-semibold rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {sortedProducts.map(p => (
                                     <tr key={p.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-muted">
-                                        <td className="px-3 py-2 font-medium">{p.name}</td>
-                                        <td className="px-3 py-2 text-muted-foreground">{p.category}</td>
-                                        <td className="px-3 py-2">${p.purchasePrice}</td>
-                                        <td className="px-3 py-2 text-primary">${p.salePrice}</td>
-                                        <td className={`px-3 py-2 font-medium ${p.stock < 15 ? 'text-destructive' : ''}`}>{p.stock}</td>
-                                        <td className="px-3 py-2 flex gap-2">
+                                        <td className="px-3 py-3 font-medium">{p.name}</td>
+                                        <td className="px-3 py-3 text-muted-foreground">{p.category}</td>
+                                        <td className="px-3 py-3">${p.purchasePrice}</td>
+                                        <td className="px-3 py-3 text-primary">${p.salePrice}</td>
+                                        <td className={`px-3 py-3 font-medium ${p.stock < 15 ? 'text-destructive' : ''}`}>{p.stock}</td>
+                                        <td className="px-3 py-3 flex gap-2">
                                             <TooltipProvider>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
