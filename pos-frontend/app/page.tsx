@@ -6,11 +6,31 @@ import {
 } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { products, customers, suppliers, orders, expenses, salesData, monthlySalesData } from '@/data/mockdata';
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 export default function Dashboard() {
+  const [sortConfig, setSortConfig] = useState<{ key: keyof typeof orders[0] | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' });
+
+  const sortedOrders = sortConfig.key
+    ? [...orders].sort((a, b) => {
+        const valA = a[sortConfig.key as keyof typeof orders[0]];
+        const valB = b[sortConfig.key as keyof typeof orders[0]];
+        if (typeof valA === 'number' && typeof valB === 'number') return sortConfig.direction === 'asc' ? valA - valB : valB - valA;
+        return sortConfig.direction === 'asc'
+          ? String(valA).localeCompare(String(valB))
+          : String(valB).localeCompare(String(valA));
+      })
+  : orders; 
+
+  const requestSort = (key: keyof typeof orders[0]) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    setSortConfig({ key, direction });
+  };
   const todaySales = orders.filter(o => o.date === '2026-03-06').reduce((s, o) => s + o.total, 0);
   const monthlySales = orders.reduce((s, o) => s + o.total, 0);
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
@@ -142,49 +162,58 @@ export default function Dashboard() {
           <table className="w-full text-sm">
 
             {/* Table Header */}
-            <thead className="text-xs uppercase text-zinc-500 border-b border-zinc-200 dark:border-zinc-700">
+            <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
               <tr>
-                <th className="py-3 text-left font-semibold">Invoice</th>
-                <th className="py-3 text-left font-semibold">Customer</th>
-                <th className="py-3 text-left font-semibold">Date</th>
-                <th className="py-3 text-left font-semibold">Amount</th>
-                <th className="py-3 text-left font-semibold">Status</th>
+                {['invoiceNo', 'customerName', 'date', 'total', 'status'].map((col) => (
+                  <th
+                    key={col}
+                    className={`py-3 text-left font-semibold ${col === 'invoiceNo' ? 'rounded-tl-lg px-0.5' : ''} ${col === 'status' ? 'rounded-tr-lg' : ''} cursor-pointer select-none`}
+                    onClick={() => requestSort(col as keyof typeof orders[0])}
+                  >
+                    <div className="flex items-center gap-1">
+                      {col === 'invoiceNo' && 'Invoice'}
+                      {col === 'customerName' && 'Customer'}
+                      {col === 'date' && 'Date'}
+                      {col === 'total' && 'Amount'}
+                      {col === 'status' && 'Status'}
+
+                      {sortConfig.key === col ? (
+                        sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                      )}
+                    </div>
+                  </th>
+                ))}
               </tr>
             </thead>
 
             {/* Table Body */}
-            <tbody>
-              {orders.slice(0, 5).map((o) => (
-                <tr
-                  key={o.id}
-                  className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
-                >
+            <tbody className="-ml-1">
+              {sortedOrders.slice(0, 5).map((o: typeof orders[0]) => (
+                <tr key={o.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                   <td className="py-3 font-mono text-xs">{o.invoiceNo}</td>
-
                   <td className="py-3">{o.customerName}</td>
-
-                  <td className="py-3 text-zinc-500">{o.date}</td>
-
-                  <td className="py-3 font-semibold">
-                    ${o.total.toLocaleString()}
-                  </td>
-
+                  <td className="py-3 text-zinc-500">{new Date(o.date).toLocaleDateString()}</td>
+                  <td className="py-3 font-semibold">${o.total.toLocaleString()}</td>
                   <td className="py-3">
                     {o.status === "paid" && (
-                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-orange-100 text-orange-600">
                         paid
                       </span>
                     )}
-
-                    {o.status === "pending" && (
-                      <span className="px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-600">
-                        pending
+                    {o.status === "overdue" && (
+                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-red-100 text-red-600">
+                        overdue
                       </span>
                     )}
-
-                    {o.status === "overdue" && (
-                      <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-600">
-                        overdue
+                    {o.status === "pending" && (
+                      <span className="px-2.5 py-1.5 text-xs rounded-md bg-green-100 text-green-600">
+                        pending
                       </span>
                     )}
                   </td>

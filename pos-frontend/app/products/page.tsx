@@ -220,20 +220,18 @@ export default function Products() {
                 {/* Products Grid */}
                 <div>
                     {/* Search Field */}
-                    <div className="mb-6 flex gap-3 mt-6">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <div className="relative max-w-md mt-6">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer" />
                             <input
-                                className="search-input w-full pl-10 border border-[#27AA83] dark:border-zinc-700 rounded-lg p-2"
+                                className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2"
                                 placeholder="Search products by name..."
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
                             />
-                        </div>
                     </div>
 
                     {/* Products Table */}
-                    <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-2 shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-x-auto">
+                    <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-2 mt-3 shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-x-auto">
                         <table className="w-full min-w-[600px] text-sm text-left">
                             <thead className="bg-[#27AA83] h-[38px]">
                                 <tr>
@@ -267,7 +265,7 @@ export default function Products() {
                                             </div>
                                         </th>
                                     ))}
-                                    <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase rounded-tr-lg">Actions</th>   
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase rounded-tr-lg">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -277,7 +275,7 @@ export default function Products() {
                                         <td className="px-3 py-2 text-muted-foreground">{p.category}</td>
                                         <td className="px-3 py-2">${p.purchasePrice}</td>
                                         <td className="px-3 py-2 text-primary">${p.salePrice}</td>
-                                        <td className={`px-3 py-2 font-semibold ${p.stock < 15 ? 'text-destructive' : ''}`}>{p.stock}</td>
+                                        <td className={`px-3 py-2 font-medium ${p.stock < 15 ? 'text-destructive' : ''}`}>{p.stock}</td>
                                         <td className="px-3 py-2 flex gap-2">
                                             <TooltipProvider>
                                                 <Tooltip>
