@@ -1,13 +1,19 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Edit2, Trash2, Package, ChevronUp, ChevronDown } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Package, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { products as initialProducts, categories as initialCategories, type Product, type Category } from '@/data/mockdata';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SortConfig = {
     key: keyof Product | null;
@@ -32,7 +38,14 @@ export default function Products() {
 
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
 
-    const sortedProducts = [...productsList].sort((a, b) => {
+
+
+    const filteredProducts = productsList.filter(p =>
+        (selectedCat === 'All' || p.category === selectedCat) &&
+        p.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const sortedProducts = [...filteredProducts].sort((a, b) => {
         if (!sortConfig.key) return 0;
         const key = sortConfig.key;
         const valA = a[key];
@@ -53,10 +66,7 @@ export default function Products() {
         setSortConfig({ key, direction });
     };
 
-    const filteredProducts = productsList.filter(p =>
-        (selectedCat === 'All' || p.category === selectedCat) &&
-        p.name.toLowerCase().includes(search.toLowerCase())
-    );
+
 
     const openNewProduct = () => {
         setEditProduct(null);
@@ -102,12 +112,12 @@ export default function Products() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="page-header flex items-center justify-between">
-                <h1 className="page-title mt-2">Products</h1>
+                <h1 className="page-title text-[18px] font-bold">Products</h1>
 
                 <Button
                     onClick={openNewProduct}
                     size="sm"
-                    className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 mt-2 text-[13px]"
+                    className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 mt-1 text-[13px]"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     Add Product
@@ -140,11 +150,12 @@ export default function Products() {
                                     value={catName}
                                     onChange={e => setCatName(e.target.value)}
                                     placeholder="Category name"
+                                    className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
                                 />
 
                                 <Button
                                     onClick={saveCat}
-                                    className="mt-2 bg-[#27AA83] hover:bg-[#219a75] text-white"
+                                    className="mt-2 bg-[#27AA83] hover:bg-[#219a75] text-white text-[13px]"
                                 >
                                     Save
                                 </Button>
@@ -152,7 +163,7 @@ export default function Products() {
                         </Dialog>
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="space-y-1 mt-4">
 
                         {/* All Products */}
                         <button
@@ -224,12 +235,16 @@ export default function Products() {
                     {/* Products Table */}
                     <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-2 shadow-sm border border-zinc-200 dark:border-zinc-700 overflow-x-auto">
                         <table className="w-full min-w-[600px] text-sm text-left">
-                            <thead className="border-b border-zinc-200 dark:border-zinc-700">
+                            <thead className="bg-[#27AA83] h-[38px]">
                                 <tr>
-                                    {['name', 'category', 'purchasePrice', 'salePrice', 'stock'].map((col) => (
+                                    {['name', 'category', 'purchasePrice', 'salePrice', 'stock'].map((col, idx, arr) => (
                                         <th
                                             key={col}
-                                            className="px-3 py-2 cursor-pointer select-none"
+                                            className={`
+                    px-3 py-2 cursor-pointer select-none text-white text-xs font-medium uppercase
+                    ${idx === 0 ? 'rounded-tl-lg' : ''} 
+                    ${idx === arr.length - 1 ? '' : ''}
+                `}
                                             onClick={() => requestSort(col as keyof Product)}
                                         >
                                             <div className="flex items-center gap-1">
@@ -238,13 +253,21 @@ export default function Products() {
                                                 {col === 'purchasePrice' && 'Buy Price'}
                                                 {col === 'salePrice' && 'Sell Price'}
                                                 {col === 'stock' && 'Stock'}
-                                                {sortConfig.key === col && (
-                                                    sortConfig.direction === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+
+                                                {/* Sort Icon */}
+                                                {sortConfig.key === col ? (
+                                                    sortConfig.direction === 'asc' ? (
+                                                        <ChevronUp className="w-3 h-3 text-white" />
+                                                    ) : (
+                                                        <ChevronDown className="w-3 h-3 text-white" />
+                                                    )
+                                                ) : (
+                                                    <ChevronsUpDown className="w-3 h-3 opacity-40 text-white" />
                                                 )}
                                             </div>
                                         </th>
                                     ))}
-                                    <th className="px-3 py-2">Actions</th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-white uppercase rounded-tr-lg">Actions</th>   
                                 </tr>
                             </thead>
                             <tbody>
@@ -256,12 +279,37 @@ export default function Products() {
                                         <td className="px-3 py-2 text-primary">${p.salePrice}</td>
                                         <td className={`px-3 py-2 font-semibold ${p.stock < 15 ? 'text-destructive' : ''}`}>{p.stock}</td>
                                         <td className="px-3 py-2 flex gap-2">
-                                            <button onClick={() => openEditProduct(p)} className="p-1 rounded hover:bg-muted">
-                                                <Edit2 className="w-4 h-4 text-muted-foreground" />
-                                            </button>
-                                            <button onClick={() => deleteProduct(p.id)} className="p-1 rounded hover:bg-muted">
-                                                <Trash2 className="w-4 h-4 text-destructive" />
-                                            </button>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <button
+                                                            onClick={() => openEditProduct(p)}
+                                                            className="p-1 rounded hover:bg-muted"
+                                                        >
+                                                            <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                                                        </button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                                                        Edit Product
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <button
+                                                            onClick={() => deleteProduct(p.id)}
+                                                            className="p-1 rounded hover:bg-muted cursor-pointer"
+                                                        >
+                                                            <Trash2 className="w-4 h-4 text-destructive cursor-pointer text-red-500" />
+                                                        </button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                                                        Delete Product
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
                                         </td>
                                     </tr>
                                 ))}
@@ -272,29 +320,123 @@ export default function Products() {
             </div>
 
             {/* Product Dialog */}
-            {/* <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>{editProduct ? 'Edit' : 'Add'} Product</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div><Label>Name</Label><Input value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
-            <div><Label>Category</Label>
-              <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{categoriesList.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>Purchase Price</Label><Input type="number" value={form.purchasePrice || 0} onChange={e => setForm({ ...form, purchasePrice: +e.target.value })} /></div>
-              <div><Label>Sale Price</Label><Input type="number" value={form.salePrice || 0} onChange={e => setForm({ ...form, salePrice: +e.target.value })} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>Stock</Label><Input type="number" value={form.stock || 0} onChange={e => setForm({ ...form, stock: +e.target.value })} /></div>
-              <div><Label>Supplier</Label><Input value={form.supplier || ''} onChange={e => setForm({ ...form, supplier: e.target.value })} /></div>
-            </div>
-            <Button onClick={saveProduct} className="w-full">Save Product</Button>
-          </div>
-        </DialogContent>
-      </Dialog> */}
+            <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{editProduct ? 'Edit' : 'Add'} Product</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-3">
+
+                        {/* Product Name */}
+                        <div>
+                            <Label>
+                                Product Name <span className="text-red-500">*</span>
+                            </Label>
+                            <Input
+                                value={form.name || ''}
+                                onChange={e => setForm({ ...form, name: e.target.value })}
+                                className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                            />
+                        </div>
+
+                        {/* Category */}
+                        <div>
+                            <Label>
+                                Category <span className="text-red-500">*</span>
+                            </Label>
+
+                            <Select
+                                value={form.category}
+                                onValueChange={v => setForm({ ...form, category: v })}
+                            >
+                                <SelectTrigger className="bg-white dark:bg-zinc-900 text-[13px] mt-0.5 border-zinc-300 focus:border-[#27AA83] focus:ring-0 focus:outline-none">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+
+                                <SelectContent className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-[13px]">
+                                    {categoriesList.map(c => (
+                                        <SelectItem key={c.id} value={c.name} className="text-[13px]">
+                                            {c.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+
+                            </Select>
+                        </div>
+
+                        {/* Prices */}
+                        <div className="grid grid-cols-2 gap-3">
+
+                            <div>
+                                <Label>
+                                    Purchase Price <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    type="number"
+                                    value={form.purchasePrice || 0}
+                                    onChange={e =>
+                                        setForm({ ...form, purchasePrice: +e.target.value })
+                                    }
+                                    className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                                />
+                            </div>
+
+                            <div>
+                                <Label>
+                                    Sale Price <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    type="number"
+                                    value={form.salePrice || 0}
+                                    onChange={e =>
+                                        setForm({ ...form, salePrice: +e.target.value })
+                                    }
+                                    className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* Stock + Supplier */}
+                        <div className="grid grid-cols-2 gap-3">
+
+                            <div>
+                                <Label>
+                                    Stock <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    type="number"
+                                    value={form.stock || 0}
+                                    onChange={e => setForm({ ...form, stock: +e.target.value })}
+                                    className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                                />
+                            </div>
+
+                            <div>
+                                <Label>
+                                    Supplier <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    value={form.supplier || ''}
+                                    onChange={e => setForm({ ...form, supplier: e.target.value })}
+                                    className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* Save Button */}
+                        <Button
+                            onClick={saveProduct}
+                            className="w-full bg-[#27AA83] hover:bg-[#219a75] text-white"
+                        >
+                            Save Product
+                        </Button>
+
+                    </div>
+                </DialogContent>
+            </Dialog>
         </motion.div>
     );
 }
