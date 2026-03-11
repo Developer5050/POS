@@ -37,6 +37,10 @@ export default function Products() {
     });
 
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
 
     const filteredProducts = productsList.filter(p =>
@@ -58,6 +62,11 @@ export default function Products() {
         }
         return 0;
     });
+
+    // Pagination calculation
+    const totalItems = sortedProducts.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const paginatedProducts = sortedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const requestSort = (key: keyof Product) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -224,7 +233,7 @@ export default function Products() {
                                 className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2"
                                 placeholder="Search products by name..."
                                 value={search}
-                                onChange={e => setSearch(e.target.value)}
+                                onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
                             />
                     </div>
 
@@ -267,7 +276,7 @@ export default function Products() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {sortedProducts.map(p => (
+                                {paginatedProducts.map(p => (
                                     <tr key={p.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-muted">
                                         <td className="px-3 py-3 font-medium">{p.name}</td>
                                         <td className="px-3 py-3 text-muted-foreground">{p.category}</td>
@@ -311,6 +320,41 @@ export default function Products() {
                                 ))}
                             </tbody>
                         </table>
+
+                        {/* Pagination */}
+                        <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
+                            <div className="text-[13px] text-gray-700">
+                                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    size="sm"
+                                    disabled={currentPage === 1}
+                                    onClick={() => setCurrentPage(prev => prev - 1)}
+                                    className="px-2 py-1 text-[13px]"
+                                >
+                                    Prev
+                                </Button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                                    <Button
+                                        key={num}
+                                        size="sm"
+                                        onClick={() => setCurrentPage(num)}
+                                        className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+                                    >
+                                        {num}
+                                    </Button>
+                                ))}
+                                <Button
+                                    size="sm"
+                                    disabled={currentPage === totalPages}
+                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                    className="px-2 py-1 text-[13px]"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
