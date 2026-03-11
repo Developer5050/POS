@@ -8,12 +8,17 @@ import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { products, customers, suppliers, orders, expenses, salesData, monthlySalesData } from '@/data/mockdata';
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
 
 export default function Dashboard() {
   const [sortConfig, setSortConfig] = useState<{ key: keyof typeof orders[0] | null; direction: 'asc' | 'desc' }>({ key: null, direction: 'asc' });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const sortedOrders = sortConfig.key
     ? [...orders].sort((a, b) => {
@@ -24,7 +29,12 @@ export default function Dashboard() {
           ? String(valA).localeCompare(String(valB))
           : String(valB).localeCompare(String(valA));
       })
-  : orders; 
+  : orders;
+
+  // Pagination calculation
+  const totalItems = sortedOrders.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedOrders = sortedOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage); 
 
   const requestSort = (key: keyof typeof orders[0]) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -194,7 +204,7 @@ export default function Dashboard() {
 
             {/* Table Body */}
             <tbody>
-              {sortedOrders.slice(0, 5).map((o: typeof orders[0]) => (
+              {paginatedOrders.map((o: typeof orders[0]) => (
                 <tr key={o.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                   <td className="py-3 px-2 font-medium text-xs">{o.invoiceNo}</td>
                   <td className="py-3">{o.customerName}</td>
@@ -221,6 +231,41 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white dark:bg-zinc-900">
+            <div className="text-[13px] text-gray-700 dark:text-gray-300">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Prev
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                <Button
+                  key={num}
+                  size="sm"
+                  onClick={() => setCurrentPage(num)}
+                  className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+                >
+                  {num}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>
