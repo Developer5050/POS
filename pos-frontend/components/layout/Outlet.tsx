@@ -11,7 +11,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
-  console.log(sidebarCollapsed);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
