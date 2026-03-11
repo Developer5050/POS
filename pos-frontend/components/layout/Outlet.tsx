@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import { usePathname } from "next/navigation";
 
 interface MainLayoutProps {
   children?: React.ReactNode;
@@ -9,8 +10,17 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const pathname = usePathname();
 
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+
+  // Check if current route is signin page
+  const isSignInPage = pathname === "/signin";
+
+  // If signin page, render without layout
+  if (isSignInPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">

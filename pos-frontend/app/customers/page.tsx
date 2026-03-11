@@ -96,7 +96,7 @@ export default function Customers() {
             <div className="mb-4 relative max-w-md mt-3">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer" />
                 <input
-                    className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2"
+                    className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-[#27AA83] focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2"
                     placeholder="Search customers by name..."
                     value={search}
                     onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
