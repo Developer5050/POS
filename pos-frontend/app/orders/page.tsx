@@ -24,6 +24,10 @@ export default function NewOrder() {
   const [dcNo, setDcNo] = useState('');
   const [poNo, setPoNo] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(prodSearch.toLowerCase()));
   const filteredCustomers = allCustomers.filter(c => c.name.toLowerCase().includes(custSearch.toLowerCase()));
@@ -51,6 +55,11 @@ export default function NewOrder() {
     }
     return 0;
   });
+
+  // Pagination calculation
+  const totalItems = sortedProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedProducts = sortedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const addToCart = (productId: string, productName: string, price: number) => {
     setCart(prev => {
@@ -97,7 +106,7 @@ export default function NewOrder() {
         <div>
           <div className="mb-4 relative mt-3">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search products..." value={prodSearch} onChange={e => setProdSearch(e.target.value)} />
+            <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search products..." value={prodSearch} onChange={e => { setProdSearch(e.target.value); setCurrentPage(1); }} />
           </div>
 
           {/* Products Table */}
@@ -169,7 +178,7 @@ export default function NewOrder() {
 
               {/* Table Body */}
               <tbody>
-                {sortedProducts.map((p) => (
+                {paginatedProducts.map((p) => (
                   <tr
                     key={p.id}
                     className="border-b border-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
@@ -201,6 +210,41 @@ export default function NewOrder() {
               </tbody>
 
             </table>
+
+            {/* Pagination */}
+            <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
+              <div className="text-[13px] text-gray-700">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  className="px-2 py-1 text-[13px]"
+                >
+                  Prev
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                  <Button
+                    key={num}
+                    size="sm"
+                    onClick={() => setCurrentPage(num)}
+                    className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+                  >
+                    {num}
+                  </Button>
+                ))}
+                <Button
+                  size="sm"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  className="px-2 py-1 text-[13px]"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Cart */}

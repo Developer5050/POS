@@ -146,7 +146,7 @@ export default function Customers() {
                                 <td className="px-4 py-2 text-gray-700 text-[14px]">{c.address}</td>
                                 <td className="px-4 py-2 text-gray-700 text-[14px]">{c.totalOrders}</td>
                                 <td className="px-4 py-2 font-medium text-gray-900 text-[14px]">${c.totalPurchase.toLocaleString()}</td>
-                                <td className="px-4 py-2 flex gap-4">
+                                <td className="px-4 py-2 flex gap-3">
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>

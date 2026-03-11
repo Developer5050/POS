@@ -144,7 +144,7 @@ export default function Suppliers() {
                 <td className="py-2 px-3 text-[14px]">{s.phone}</td>
                 <td className="py-2 px-3 text-[14px]">{s.address}</td>
                 <td className="py-2 px-3 text-[14px]">
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
