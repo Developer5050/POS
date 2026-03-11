@@ -19,9 +19,18 @@ type SortConfig = {
 export default function Expenses() {
   const [expenseList, setExpenseList] = useState<Expense[]>(initialExpenses);
   const [showDialog, setShowDialog] = useState(false);
+  const [search, setSearch] = useState('');
   const [form, setForm] = useState<Partial<Expense>>({ category: 'Miscellaneous', description: '', amount: 0, date: '2026-03-06' });
   const [salesSort, setSalesSort] = useState<SortConfig>({ key: null, direction: 'asc' });
   const [expenseSort, setExpenseSort] = useState<SortConfig>({ key: null, direction: 'asc' });
+  // Add pagination state at the top
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // change number of rows per page
+
+  const filteredExpenses = expenseList.filter(e =>
+    e.category.toLowerCase().includes(search.toLowerCase()) ||
+    e.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   const totalSales = orders.reduce((s, o) => s + o.total, 0);
   const totalPurchaseCost = orders.reduce((s, o) => s + o.items.reduce((si, i) => {
@@ -72,6 +81,13 @@ export default function Expenses() {
     return 0;
   });
 
+  const totalSalesRecords = sortedSalesRecords.length;
+  const totalSalesPages = Math.ceil(totalSalesRecords / itemsPerPage);
+  const paginatedSalesRecords = sortedSalesRecords.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const requestExpenseSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (expenseSort.key === key && expenseSort.direction === 'asc') {
@@ -80,7 +96,7 @@ export default function Expenses() {
     setExpenseSort({ key, direction });
   };
 
-  const sortedExpenses = [...expenseList].sort((a, b) => {
+  const sortedExpenses = [...filteredExpenses].sort((a, b) => {
     if (!expenseSort.key) return 0;
     const key = expenseSort.key as keyof Expense;
     const aVal = a[key];
@@ -94,6 +110,13 @@ export default function Expenses() {
     }
     return 0;
   });
+
+  const totalExpenseItems = sortedExpenses.length;
+  const totalExpensePages = Math.ceil(totalExpenseItems / itemsPerPage);
+  const paginatedExpenses = sortedExpenses.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const save = () => {
     setExpenseList(prev => [...prev, { id: Date.now().toString(), ...form } as Expense]);
@@ -276,12 +299,12 @@ export default function Expenses() {
             </thead>
 
             <tbody className="divide-y">
-              {sortedSalesRecords.map((r, i) => (
+              {paginatedSalesRecords.map((r, i) => (
                 <tr key={i} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-3 text-[14px]">{r.name}</td>
-                  <td className="px-4 py-3 text-[14px]">${r.salePrice}</td>
-                  <td className="px-4 py-3 text-[14px]">${r.purchasePrice}</td>
-                  <td className={`px-4 py-3 text-[14px] ${r.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <td className="px-4 py-2 text-[14px]">{r.name}</td>
+                  <td className="px-4 py-2 text-[14px]">${r.salePrice}</td>
+                  <td className="px-4 py-2 text-[14px]">${r.purchasePrice}</td>
+                  <td className={`px-4 py-2 text-[14px] ${r.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     ${r.profit.toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-[14px]">{r.date}</td>
@@ -289,6 +312,41 @@ export default function Expenses() {
               ))}
             </tbody>
           </table>
+
+          {/* Sales Pagination */}
+          <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
+            <div className="text-[13px] text-gray-700">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalSalesRecords)} of {totalSalesRecords} entries
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Prev
+              </Button>
+              {Array.from({ length: totalSalesPages }, (_, i) => i + 1).map((num) => (
+                <Button
+                  key={num}
+                  size="sm"
+                  onClick={() => setCurrentPage(num)}
+                  className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+                >
+                  {num}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                disabled={currentPage === totalSalesPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
 
         </div>
 
@@ -364,7 +422,7 @@ export default function Expenses() {
             </thead>
 
             <tbody className="divide-y">
-              {sortedExpenses.map((e) => (
+              {paginatedExpenses.map((e) => (
                 <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-4 py-1 text-[14px]">
                     {e.category}
@@ -403,6 +461,41 @@ export default function Expenses() {
               ))}
             </tbody>
           </table>
+
+          {/* Expenses Pagination */}
+          <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
+            <div className="text-[13px] text-gray-700">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalExpenseItems)} of {totalExpenseItems} entries
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Prev
+              </Button>
+              {Array.from({ length: totalExpensePages }, (_, i) => i + 1).map((num) => (
+                <Button
+                  key={num}
+                  size="sm"
+                  onClick={() => setCurrentPage(num)}
+                  className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+                >
+                  {num}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                disabled={currentPage === totalExpensePages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-2 py-1 text-[13px]"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
 
         </div>
 
