@@ -31,36 +31,80 @@ export default function Employees() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="page-header">
-        <h1 className="page-title">Employees</h1>
-        <Button onClick={openNew} size="sm"><Plus className="w-4 h-4 mr-1" /> Add Employee</Button>
+      <div className="page-header flex items-center justify-between">
+        <h1 className="page-title text-[18px] font-bold mt-1">Employees</h1>
+        <Button
+          onClick={openNew}
+          size="sm"
+          className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 text-[13px] mt-1"
+        >
+          <Plus className="w-4 h-4" />
+          Add Employee
+        </Button>
       </div>
 
-      <div className="mb-4 relative max-w-md">
+      <div className="mb-4 relative max-w-md mt-2">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input className="search-input w-full pl-10" placeholder="Search employees..." value={search} onChange={e => setSearch(e.target.value)} />
+        <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search employees..." value={search} onChange={e => setSearch(e.target.value)} />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(e => (
-          <div key={e.id} className="stat-card">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <p className="font-semibold">{e.name}</p>
-                <span className="badge-info">{e.position}</span>
-              </div>
-              <div className="flex gap-1">
-                <button onClick={() => openEdit(e)} className="p-1 rounded hover:bg-muted"><Edit2 className="w-3.5 h-3.5" /></button>
-                <button onClick={() => setList(prev => prev.filter(x => x.id !== e.id))} className="p-1 rounded hover:bg-muted"><Trash2 className="w-3.5 h-3.5 text-destructive" /></button>
-              </div>
-            </div>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{e.phone}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Salary</span><span className="font-semibold">${e.salary.toLocaleString()}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Joined</span><span>{e.joiningDate}</span></div>
-            </div>
-          </div>
-        ))}
+      <div className="overflow-x-auto bg-white shadow rounded-md">
+        <table className="min-w-full">
+
+          {/* Table Header */}
+          <thead className="bg-[#27AA83] text-white">
+            <tr>
+              <th className="px-4 py-2 text-left rounded-tl-md">Name</th>
+              <th className="px-4 py-2 text-left">Position</th>
+              <th className="px-4 py-2 text-left">Phone</th>
+              <th className="px-4 py-2 text-left">Salary</th>
+              <th className="px-4 py-2 text-left">Joined</th>
+              <th className="px-4 py-2 text-right rounded-tr-md">Actions</th>
+            </tr>
+          </thead>
+
+          {/* Table Body */}
+          <tbody className="divide-y">
+            {filtered.map((e) => (
+              <tr key={e.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+
+                <td className="px-4 py-2 text-[14px]">{e.name}</td>
+
+                <td className="px-4 py-2 text-[14px]">
+                  <span className="badge-info">{e.position}</span>
+                </td>
+
+                <td className="px-4 py-2 text-[14px]">{e.phone}</td>
+
+                <td className="px-4 py-2 text-[14px]">
+                  ${e.salary.toLocaleString()}
+                </td>
+
+                <td className="px-4 py-2 text-[14px]">{e.joiningDate}</td>
+
+                <td className="px-4 py-2 flex justify-end gap-2">
+                  <button
+                    onClick={() => openEdit(e)}
+                    className="p-1"
+                  >
+                    <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setList((prev) => prev.filter((x) => x.id !== e.id))
+                    }
+                    className="p-1"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-500 cursor-pointer" />
+                  </button>
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
