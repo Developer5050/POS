@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function Employees() {
   const [list, setList] = useState<Employee[]>(initialEmployees);
@@ -83,21 +84,37 @@ export default function Employees() {
                 <td className="px-4 py-2 text-[14px]">{e.joiningDate}</td>
 
                 <td className="px-4 py-2 flex justify-end gap-2">
-                  <button
-                    onClick={() => openEdit(e)}
-                    className="p-1"
-                  >
-                    <Edit2 className="w-4 h-4 text-muted-foreground cursor-pointer" />
-                  </button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => openEdit(e)}
+                          className="p-1"
+                        >
+                          <Edit2 className="w-4 h-4 text-black cursor-pointer" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                        Edit Employee
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
 
-                  <button
-                    onClick={() =>
-                      setList((prev) => prev.filter((x) => x.id !== e.id))
-                    }
-                    className="p-1"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500 cursor-pointer" />
-                  </button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setList((prev) => prev.filter((x) => x.id !== e.id))}
+                          className="p-1"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-500 cursor-pointer" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                        Delete Employee
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </td>
 
               </tr>
@@ -109,14 +126,66 @@ export default function Employees() {
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{editing ? 'Edit' : 'Add'} Employee</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>{editing ? 'Edit' : 'Add'} Employee</DialogTitle>
+          </DialogHeader>
+
           <div className="space-y-3">
-            <div><Label>Name</Label><Input value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
-            <div><Label>Phone</Label><Input value={form.phone || ''} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
-            <div><Label>Position</Label><Input value={form.position || ''} onChange={e => setForm({ ...form, position: e.target.value })} /></div>
-            <div><Label>Salary</Label><Input type="number" value={form.salary || 0} onChange={e => setForm({ ...form, salary: +e.target.value })} /></div>
-            <div><Label>Joining Date</Label><Input type="date" value={form.joiningDate || ''} onChange={e => setForm({ ...form, joiningDate: e.target.value })} /></div>
-            <Button onClick={save} className="w-full">Save</Button>
+
+            <div>
+              <Label>Name <span className="text-red-500">*</span></Label>
+              <Input
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] "
+                value={form.name || ''}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label>Phone <span className="text-red-500">*</span></Label>
+              <Input
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] "
+                value={form.phone || ''}
+                onChange={e => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label>Position <span className="text-red-500">*</span></Label>
+              <Input
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] "
+                value={form.position || ''}
+                onChange={e => setForm({ ...form, position: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label>Salary <span className="text-red-500">*</span></Label>
+              <Input
+                type="number"
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] "
+                value={form.salary || 0}
+                onChange={e => setForm({ ...form, salary: +e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label>Joining Date <span className="text-red-500">*</span></Label>
+              <Input
+                type="date"
+                className="mt-1 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] "
+                value={form.joiningDate || ''}
+                onChange={e => setForm({ ...form, joiningDate: e.target.value })}
+              />
+            </div>
+
+            <Button
+              className="w-full bg-[#27AA83] hover:bg-[#21976f] text-white"
+              onClick={save}
+            >
+              Save
+            </Button>
+
           </div>
         </DialogContent>
       </Dialog>

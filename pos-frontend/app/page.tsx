@@ -71,7 +71,7 @@ export default function Dashboard() {
               </div>
             </div>
             <p className="text-[12px] font-medium text-muted-foreground">{s.label}</p>
-            <p className="text-lg font-bold mt-1">{s.value}</p>
+            <p className="text-[16px] font-bold mt-1">{s.value}</p>
           </div>
         ))}
       </motion.div>
@@ -202,17 +202,17 @@ export default function Dashboard() {
                   <td className="py-3 font-medium">${o.total.toLocaleString()}</td>
                   <td className="py-3">
                     {o.status === "paid" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-orange-200 text-orange-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-xl bg-orange-100 text-orange-600">
                         paid
                       </span>
                     )}
                     {o.status === "overdue" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-red-200 text-red-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-xl bg-red-100 text-red-600">
                         overdue
                       </span>
                     )}
                     {o.status === "pending" && (
-                      <span className="px-2.5 py-1.5 text-xs rounded-lg bg-green-200 text-green-600">
+                      <span className="px-2.5 py-1.5 text-xs rounded-xl bg-green-100 text-green-600">
                         pending
                       </span>
                     )}

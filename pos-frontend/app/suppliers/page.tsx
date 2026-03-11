@@ -77,10 +77,10 @@ export default function Suppliers() {
           <tbody>
             {filtered.map(s => (
               <tr key={s.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
-                <td className="py-2 px-3 font-medium text-[14px]">{s.name}</td>
+                <td className="py-2 px-3 text-[14px]">{s.name}</td>
                 <td className="py-2 px-3 text-[14px]">{s.company}</td>
                 <td className="py-2 px-3 text-[14px]">{s.phone}</td>
-                <td className="py-2 px-3 text-zinc-500 text-[14px]">{s.address}</td>
+                <td className="py-2 px-3 text-[14px]">{s.address}</td>
                 <td className="py-2 px-3 text-[14px]">
                   <div className="flex gap-2">
                     <TooltipProvider>

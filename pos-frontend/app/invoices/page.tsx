@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Eye, Printer, Download, Search } from 'lucide-react';
 import { orders } from '@/data/mockdata';
 import { useState } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function Invoices() {
   const [search, setSearch] = useState('');
@@ -31,9 +32,9 @@ export default function Invoices() {
             <tr>
               <th className="py-3 px-3 text-left font-semibold rounded-tl-lg">Invoice</th>
               <th className="py-3 px-3 text-left font-semibold">Customer</th>
-              <th className="py-3 px-3 text-left font-semibold">Date</th>
               <th className="py-3 px-3 text-left font-semibold">Amount</th>
               <th className="py-3 px-3 text-left font-semibold">Status</th>
+              <th className="py-3 px-3 text-left font-semibold">Date</th>
               <th className="py-3 px-3 text-left font-semibold rounded-tr-lg">Actions</th>
             </tr>
           </thead>
@@ -47,16 +48,12 @@ export default function Invoices() {
                 className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
               >
 
-                <td className="px-4 py-2 font-mono text-xs font-medium">
+                <td className="px-4 py-2 text-[14px]">
                   {o.invoiceNo}
                 </td>
 
                 <td className="px-4 py-2 text-[14px]">
                   {o.customerName}
-                </td>
-
-                <td className="px-4 py-2 text-gray-500 text-[14px]">
-                  {o.date}
                 </td>
 
                 <td className="px-4 py-2 font-medium text-[14px]">
@@ -66,31 +63,62 @@ export default function Invoices() {
                 <td className="px-4 py-2">
 
                   {o.status === "paid" && (
-                    <span className="px-2.5 py-1.5 text-xs rounded-lg bg-orange-200 text-orange-600">
+                    <span className="px-2.5 py-1.5 text-xs rounded-xl bg-orange-100 text-orange-600">
                       paid
                     </span>
                   )}
                   {o.status === "overdue" && (
-                    <span className="px-2.5 py-1.5 text-xs rounded-lg bg-red-200 text-red-600">
+                    <span className="px-2.5 py-1.5 text-xs rounded-xl bg-red-100 text-red-600">
                       overdue
                     </span>
                   )}
                   {o.status === "pending" && (
-                    <span className="px-2.5 py-1.5 text-xs rounded-lg bg-green-200 text-green-600">
+                    <span className="px-2.5 py-1.5 text-xs rounded-xl bg-green-100 text-green-600">
                       pending
                     </span>
                   )}
 
                 </td>
 
+                <td className="px-4 py-2 text-[14px]">
+                  {o.date}
+                </td>
+
                 <td className="px-4 py-2">
                   <div className="flex gap-3">
 
-                    <Eye className="w-4 h-4 text-gray-600 cursor-pointer hover:text-black" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Eye className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                          View Invoice
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Printer className="w-4 h-4 text-gray-600 cursor-pointer hover:text-black" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Printer className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                          Print Invoice
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Download className="w-4 h-4 text-gray-600 cursor-pointer hover:text-black" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Download className="w-4 h-4 text-muted-foreground cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-white text-black border border-zinc-200 shadow-md">
+                          Download Invoice
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
                   </div>
                 </td>

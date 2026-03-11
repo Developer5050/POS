@@ -91,26 +91,26 @@ export default function NewOrder() {
                 {filteredProducts.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-zinc-200 hover:bg-zinc-50 transition"
+                    className="border-b border-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
                   >
-                    <td className="py-3 px-3">{p.name}</td>
+                    <td className="py-3 px-3 text-[14px]">{p.name}</td>
 
-                    <td className="py-3 px-3 text-zinc-500">
+                    <td className="py-3 px-3 text-[14px]">
                       {p.category}
                     </td>
 
-                    <td className="py-3 px-3 font-medium">
+                    <td className="py-3 px-3 text-[14px]">
                       ${p.salePrice}
                     </td>
 
-                    <td className="py-3 px-3">
+                    <td className="py-3 px-3 text-[14px]">
                       {p.stock}
                     </td>
 
-                    <td className="py-3 px-3">
+                    <td className="py-3 px-3 text-[14px]">
                       <button
                         onClick={() => addToCart(p.id, p.name, p.salePrice)}
-                        className="px-3 py-1 text-xs bg-[#27AA83] text-white rounded-md hover:bg-[#219a75] cursor-pointer"
+                        className="px-3 py-1 text-[13px] bg-[#27AA83] text-white rounded-md hover:bg-[#219a75] cursor-pointer"
                       >
                         Add
                       </button>
