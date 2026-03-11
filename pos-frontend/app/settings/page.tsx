@@ -1,12 +1,13 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Store, Cpu, FileText} from 'lucide-react';
+import { Save, Store, Cpu, FileText, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -160,11 +161,21 @@ export default function SettingsPage() {
 
             <div>
               <Label className="text-[14px]">Currency</Label>
-              <Input
+
+              <Select
                 value={settings.currency}
-                onChange={e => setSettings({ ...settings, currency: e.target.value })}
-                className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
-              />
+                onValueChange={(v) => setSettings({ ...settings, currency: v })}
+              >
+                <SelectTrigger className="text-[13px] mt-0.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+
+                <SelectContent className="bg-white border border-gray-200 shadow-md text-[13px]">
+                  <SelectItem value="USD">USD ($)</SelectItem>
+                  <SelectItem value="PKR">PKR (₨)</SelectItem>
+                  <SelectItem value="EUR">EUR (€)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -233,12 +244,24 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <Label className="text-[14px]">Default Payment Method</Label>
-              <Input
+              <Label className="text-[14px]">Payment Method</Label>
+
+              <Select
                 value={settings.defaultPayment}
-                onChange={e => setSettings({ ...settings, defaultPayment: e.target.value })}
-                className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
-              />
+                onValueChange={(v) => setSettings({ ...settings, defaultPayment: v })}
+              >
+                <SelectTrigger className="text-[13px] mt-0.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]">
+                  <SelectValue placeholder="Select payment method" />
+                </SelectTrigger>
+
+                <SelectContent className="bg-white border border-gray-200 shadow-md text-[13px]">
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="Card">Card</SelectItem>
+                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="JazzCasCalendarh">JazzCash</SelectItem>
+                  <SelectItem value="EasyPaisa">EasyPaisa</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -252,11 +275,19 @@ export default function SettingsPage() {
 
             <div>
               <Label className="text-[14px]">Date Format</Label>
-              <Input
-                value={settings.dateFormat}
-                onChange={e => setSettings({ ...settings, dateFormat: e.target.value })}
-                className="text-[13px] mt-0.5 border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
-              />
+
+              <div className="relative mt-0.5">
+
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+
+                <Input
+                  type="date"
+                  value={settings.dateFormat}
+                  onChange={e => setSettings({ ...settings, dateFormat: e.target.value })}
+                  className="pl-9 text-[13px] border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83]"
+                />
+
+              </div>
             </div>
 
           </div>
