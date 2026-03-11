@@ -25,6 +25,10 @@ export default function Suppliers() {
   const [form, setForm] = useState<Partial<Supplier>>({ name: '', phone: '', address: '', company: '' });
   const [showPurchase, setShowPurchase] = useState(false);
   const [purchaseForm, setPurchaseForm] = useState({ supplierId: '', productId: '', qty: 1, purchasePrice: 0, salePrice: 0 });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filtered = list.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.company.toLowerCase().includes(search.toLowerCase()));
 
@@ -49,6 +53,11 @@ export default function Suppliers() {
     }
     return 0;
   });
+
+  // Pagination calculation
+  const totalItems = sortedList.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedList = sortedList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
 
   const columns: { key: keyof Supplier; label: string }[] = [
@@ -93,7 +102,7 @@ export default function Suppliers() {
 
       <div className="mb-4 relative mt-3 max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search suppliers..." value={search} onChange={e => setSearch(e.target.value)} />
+        <input className="search-input w-full pl-10 py-2.5 border border-zinc-300 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus:border-[#27AA83] text-[13px] mt-0.5 rounded-lg p-2" placeholder="Search suppliers..." value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }} />
       </div>
 
       <div className="stat-card overflow-x-auto bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700">
@@ -128,7 +137,7 @@ export default function Suppliers() {
 
           {/* Table Body */}
           <tbody>
-            {sortedList.map(s => (
+            {paginatedList.map(s => (
               <tr key={s.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                 <td className="py-2 px-3 text-[14px]">{s.name}</td>
                 <td className="py-2 px-3 text-[14px]">{s.company}</td>
@@ -162,6 +171,41 @@ export default function Suppliers() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
+          <div className="text-[13px] text-gray-700">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+          </div>
+          <div className="flex items-center gap-1">
+            <Button
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+              className="px-2 py-1 text-[13px]"
+            >
+              Prev
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <Button
+                key={num}
+                size="sm"
+                onClick={() => setCurrentPage(num)}
+                className={`px-4 py-1 text-[13px] rounded-md hover:bg-[#219a75] ${currentPage === num ? 'bg-[#27AA83] text-white' : ''}`}
+              >
+                {num}
+              </Button>
+            ))}
+            <Button
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+              className="px-2 py-1 text-[13px]"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
