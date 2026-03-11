@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { employees as initialEmployees, type Employee } from '@/data/mockdata';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,14 +9,43 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+type SortConfig = {
+  key: keyof Employee | null;
+  direction: 'asc' | 'desc';
+};
+
 export default function Employees() {
   const [list, setList] = useState<Employee[]>(initialEmployees);
   const [search, setSearch] = useState('');
   const [showDialog, setShowDialog] = useState(false);
   const [editing, setEditing] = useState<Employee | null>(null);
   const [form, setForm] = useState<Partial<Employee>>({ name: '', phone: '', position: '', salary: 0, joiningDate: '' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
 
   const filtered = list.filter(e => e.name.toLowerCase().includes(search.toLowerCase()));
+
+  const requestSort = (key: keyof Employee) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedList = [...filtered].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const key = sortConfig.key;
+    const aVal = a[key] ?? '';
+    const bVal = b[key] ?? '';
+
+    if (typeof aVal === 'string') {
+      return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal as unknown as string) : (bVal as unknown as string).localeCompare(aVal);
+    }
+    if (typeof aVal === 'number') {
+      return sortConfig.direction === 'asc' ? aVal - (bVal as unknown as number) : (bVal as unknown as number) - aVal;
+    }
+    return 0;
+  });
 
   const openNew = () => { setEditing(null); setForm({ name: '', phone: '', position: '', salary: 0, joiningDate: '' }); setShowDialog(true); };
   const openEdit = (e: Employee) => { setEditing(e); setForm(e); setShowDialog(true); };
@@ -55,18 +84,83 @@ export default function Employees() {
           {/* Table Header */}
           <thead className="bg-[#27AA83] text-white">
             <tr>
-              <th className="px-4 py-2 text-left rounded-tl-md">Name</th>
-              <th className="px-4 py-2 text-left">Position</th>
-              <th className="px-4 py-2 text-left">Phone</th>
-              <th className="px-4 py-2 text-left">Salary</th>
-              <th className="px-4 py-2 text-left">Joined</th>
-              <th className="px-4 py-2 text-right rounded-tr-md">Actions</th>
+              <th className="px-4 py-2 text-left text-[14px] rounded-tl-md cursor-pointer select-none" onClick={() => requestSort('name')}>
+                <div className="flex items-center gap-1">
+                  Name
+                  {sortConfig.key === 'name' ? (
+                    sortConfig.direction === 'asc' ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-2 text-left text-[14px] cursor-pointer select-none" onClick={() => requestSort('position')}>
+                <div className="flex items-center gap-1">
+                  Position
+                  {sortConfig.key === 'position' ? (
+                    sortConfig.direction === 'asc' ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-2 text-left text-[14px] cursor-pointer select-none" onClick={() => requestSort('phone')}>
+                <div className="flex items-center gap-1">
+                  Phone
+                  {sortConfig.key === 'phone' ? (
+                    sortConfig.direction === 'asc' ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-2 text-left text-[14px] cursor-pointer select-none" onClick={() => requestSort('salary')}>
+                <div className="flex items-center gap-1">
+                  Salary
+                  {sortConfig.key === 'salary' ? (
+                    sortConfig.direction === 'asc' ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-2 text-left text-[14px] cursor-pointer select-none" onClick={() => requestSort('joiningDate')}>
+                <div className="flex items-center gap-1">
+                  Joined
+                  {sortConfig.key === 'joiningDate' ? (
+                    sortConfig.direction === 'asc' ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3" />
+                    )
+                  ) : (
+                    <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                  )}
+                </div>
+              </th>
+              <th className="px-4 py-2 text-right text-[14px] rounded-tr-md">Actions</th>
             </tr>
           </thead>
 
           {/* Table Body */}
           <tbody className="divide-y">
-            {filtered.map((e) => (
+            {sortedList.map((e) => (
               <tr key={e.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
 
                 <td className="px-4 py-2 text-[14px]">{e.name}</td>

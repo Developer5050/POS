@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { Plus, Trash2, TrendingUp, TrendingDown, DollarSign, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { expenses as initialExpenses, orders, products, type Expense } from '@/data/mockdata';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
@@ -11,10 +11,17 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+type SortConfig = {
+  key: string | null;
+  direction: 'asc' | 'desc';
+};
+
 export default function Expenses() {
   const [expenseList, setExpenseList] = useState<Expense[]>(initialExpenses);
   const [showDialog, setShowDialog] = useState(false);
   const [form, setForm] = useState<Partial<Expense>>({ category: 'Miscellaneous', description: '', amount: 0, date: '2026-03-06' });
+  const [salesSort, setSalesSort] = useState<SortConfig>({ key: null, direction: 'asc' });
+  const [expenseSort, setExpenseSort] = useState<SortConfig>({ key: null, direction: 'asc' });
 
   const totalSales = orders.reduce((s, o) => s + o.total, 0);
   const totalPurchaseCost = orders.reduce((s, o) => s + o.items.reduce((si, i) => {
@@ -41,6 +48,52 @@ export default function Expenses() {
     { name: 'Expenses', amount: totalExpenses },
     { name: profit >= 0 ? 'Profit' : 'Loss', amount: Math.abs(profit) },
   ];
+
+  const requestSalesSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (salesSort.key === key && salesSort.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSalesSort({ key, direction });
+  };
+
+  const sortedSalesRecords = [...salesRecords].sort((a, b) => {
+    if (!salesSort.key) return 0;
+    const key = salesSort.key as keyof typeof a;
+    const aVal = a[key];
+    const bVal = b[key];
+
+    if (typeof aVal === 'string') {
+      return salesSort.direction === 'asc' ? (aVal as string).localeCompare(bVal as string) : (bVal as string).localeCompare(aVal as string);
+    }
+    if (typeof aVal === 'number') {
+      return salesSort.direction === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+    }
+    return 0;
+  });
+
+  const requestExpenseSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (expenseSort.key === key && expenseSort.direction === 'asc') {
+      direction = 'desc';
+    }
+    setExpenseSort({ key, direction });
+  };
+
+  const sortedExpenses = [...expenseList].sort((a, b) => {
+    if (!expenseSort.key) return 0;
+    const key = expenseSort.key as keyof Expense;
+    const aVal = a[key];
+    const bVal = b[key];
+
+    if (typeof aVal === 'string') {
+      return expenseSort.direction === 'asc' ? (aVal as string).localeCompare(bVal as string) : (bVal as string).localeCompare(aVal as string);
+    }
+    if (typeof aVal === 'number') {
+      return expenseSort.direction === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number);
+    }
+    return 0;
+  });
 
   const save = () => {
     setExpenseList(prev => [...prev, { id: Date.now().toString(), ...form } as Expense]);
@@ -149,16 +202,81 @@ export default function Expenses() {
           <table className="min-w-full">
             <thead className="bg-[#27AA83] text-white">
               <tr>
-                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tl-md">Product</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Sale</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Cost</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Profit</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tr-md">Date</th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tl-md cursor-pointer select-none" onClick={() => requestSalesSort('name')}>
+                  <div className="flex items-center gap-1">
+                    Product
+                    {salesSort.key === 'name' ? (
+                      salesSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestSalesSort('salePrice')}>
+                  <div className="flex items-center gap-1">
+                    Sale
+                    {salesSort.key === 'salePrice' ? (
+                      salesSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestSalesSort('purchasePrice')}>
+                  <div className="flex items-center gap-1">
+                    Cost
+                    {salesSort.key === 'purchasePrice' ? (
+                      salesSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestSalesSort('profit')}>
+                  <div className="flex items-center gap-1">
+                    Profit
+                    {salesSort.key === 'profit' ? (
+                      salesSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tr-md cursor-pointer select-none" onClick={() => requestSalesSort('date')}>
+                  <div className="flex items-center gap-1">
+                    Date
+                    {salesSort.key === 'date' ? (
+                      salesSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
               </tr>
             </thead>
 
             <tbody className="divide-y">
-              {salesRecords.map((r, i) => (
+              {sortedSalesRecords.map((r, i) => (
                 <tr key={i} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-4 py-3 text-[14px]">{r.name}</td>
                   <td className="px-4 py-3 text-[14px]">${r.salePrice}</td>
@@ -185,16 +303,68 @@ export default function Expenses() {
           <table className="min-w-full">
             <thead className="bg-[#27AA83] text-white">
               <tr>
-                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tl-md">Category</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Description</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Amount</th>
-                <th className="px-4 py-2 text-[14px] font-bold text-left">Date</th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left rounded-tl-md cursor-pointer select-none" onClick={() => requestExpenseSort('category')}>
+                  <div className="flex items-center gap-1">
+                    Category
+                    {expenseSort.key === 'category' ? (
+                      expenseSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestExpenseSort('description')}>
+                  <div className="flex items-center gap-1">
+                    Description
+                    {expenseSort.key === 'description' ? (
+                      expenseSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestExpenseSort('amount')}>
+                  <div className="flex items-center gap-1">
+                    Amount
+                    {expenseSort.key === 'amount' ? (
+                      expenseSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+                <th className="px-4 py-2 text-[14px] font-bold text-left cursor-pointer select-none" onClick={() => requestExpenseSort('date')}>
+                  <div className="flex items-center gap-1">
+                    Date
+                    {expenseSort.key === 'date' ? (
+                      expenseSort.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
                 <th className="px-4 py-2 text-[14px] font-bold text-right rounded-tr-md">Action</th>
               </tr>
             </thead>
 
             <tbody className="divide-y">
-              {expenseList.map((e) => (
+              {sortedExpenses.map((e) => (
                 <tr key={e.id} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-4 py-1 text-[14px]">
                     {e.category}

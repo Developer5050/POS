@@ -164,10 +164,10 @@ export default function Dashboard() {
             {/* Table Header */}
             <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
               <tr>
-                {['invoiceNo', 'customerName', 'date', 'total', 'status'].map((col) => (
+                {['invoiceNo', 'customerName', 'date', 'total'].map((col) => (
                   <th
                     key={col}
-                    className={`py-3 text-left font-semibold ${col === 'invoiceNo' ? 'rounded-tl-lg px-2' : ''} ${col === 'status' ? 'rounded-tr-lg' : ''} cursor-pointer select-none`}
+                    className={`py-3 text-left font-semibold ${col === 'invoiceNo' ? 'rounded-tl-lg px-2' : ''} cursor-pointer select-none`}
                     onClick={() => requestSort(col as keyof typeof orders[0])}
                   >
                     <div className="flex items-center gap-1">
@@ -175,7 +175,6 @@ export default function Dashboard() {
                       {col === 'customerName' && 'Customer'}
                       {col === 'date' && 'Date'}
                       {col === 'total' && 'Amount'}
-                      {col === 'status' && 'Status'}
 
                       {sortConfig.key === col ? (
                         sortConfig.direction === 'asc' ? (
@@ -189,6 +188,7 @@ export default function Dashboard() {
                     </div>
                   </th>
                 ))}
+                <th className="py-3 text-left font-semibold rounded-tr-lg">Status</th>
               </tr>
             </thead>
 
@@ -198,7 +198,7 @@ export default function Dashboard() {
                 <tr key={o.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                   <td className="py-3 px-2 font-medium text-xs">{o.invoiceNo}</td>
                   <td className="py-3">{o.customerName}</td>
-                  <td className="py-3 text-zinc-500">{new Date(o.date).toLocaleDateString()}</td>
+                  <td className="py-3 ">{new Date(o.date).toLocaleDateString()}</td>
                   <td className="py-3 font-medium">${o.total.toLocaleString()}</td>
                   <td className="py-3">
                     {o.status === "paid" && (

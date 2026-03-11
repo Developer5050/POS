@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Edit2, Trash2, ShoppingBag } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, ShoppingBag, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { suppliers as initialSuppliers, products as allProducts, type Supplier } from '@/data/mockdata';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+type SortConfig = {
+  key: keyof Supplier | null;
+  direction: 'asc' | 'desc';
+};
+
 export default function Suppliers() {
   const [list, setList] = useState<Supplier[]>(initialSuppliers);
   const [search, setSearch] = useState('');
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
   const [showDialog, setShowDialog] = useState(false);
   const [editing, setEditing] = useState<Supplier | null>(null);
   const [form, setForm] = useState<Partial<Supplier>>({ name: '', phone: '', address: '', company: '' });
@@ -21,6 +27,36 @@ export default function Suppliers() {
   const [purchaseForm, setPurchaseForm] = useState({ supplierId: '', productId: '', qty: 1, purchasePrice: 0, salePrice: 0 });
 
   const filtered = list.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.company.toLowerCase().includes(search.toLowerCase()));
+
+  const requestSort = (key: keyof Supplier) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedList = [...filtered].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const key = sortConfig.key;
+    const aVal = a[key] ?? '';
+    const bVal = b[key] ?? '';
+    if (typeof aVal === 'string') {
+      return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    }
+    if (typeof aVal === 'number') {
+      return sortConfig.direction === 'asc' ? aVal - (bVal as unknown as number) : (bVal as unknown as number) - aVal;
+    }
+    return 0;
+  });
+
+
+  const columns: { key: keyof Supplier; label: string }[] = [
+    { key: 'name', label: 'Name' },
+    { key: 'company', label: 'Company' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'address', label: 'Address' },
+  ];
 
   const openNew = () => { setEditing(null); setForm({ name: '', phone: '', address: '', company: '' }); setShowDialog(true); };
   const openEdit = (s: Supplier) => { setEditing(s); setForm(s); setShowDialog(true); };
@@ -65,17 +101,34 @@ export default function Suppliers() {
           {/* Table Header */}
           <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
             <tr>
-              <th className="py-2 px-3 text-left font-semibold rounded-tl-lg">Name</th>
-              <th className="py-2 px-3 text-left font-semibold">Company</th>
-              <th className="py-2 px-3 text-left font-semibold">Phone</th>
-              <th className="py-2 px-3 text-left font-semibold">Address</th>
+              {columns.map(col => (
+                <th
+                  key={col.key}
+                  onClick={() => requestSort(col.key)}
+                  className={`py-2 px-3 text-left font-semibold cursor-pointer select-none ${col.key === 'name' ? 'rounded-tl-lg' : ''
+                    } ${col.key === 'address' ? '' : ''}`}
+                >
+                  <div className="flex items-center gap-1">
+                    {col.label}
+                    {sortConfig.key === col.key ? (
+                      sortConfig.direction === 'asc' ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3" />
+                      )
+                    ) : (
+                      <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                    )}
+                  </div>
+                </th>
+              ))}
               <th className="py-2 px-3 text-left font-semibold rounded-tr-lg">Actions</th>
             </tr>
           </thead>
 
           {/* Table Body */}
           <tbody>
-            {filtered.map(s => (
+            {sortedList.map(s => (
               <tr key={s.id} className="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                 <td className="py-2 px-3 text-[14px]">{s.name}</td>
                 <td className="py-2 px-3 text-[14px]">{s.company}</td>

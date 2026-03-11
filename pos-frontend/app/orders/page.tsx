@@ -1,15 +1,20 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Minus } from 'lucide-react';
+import { Search, Plus, Minus, ChevronUp, ChevronDown, ChevronsUpDown, ShoppingCart } from 'lucide-react';
 import { IoCartOutline } from "react-icons/io5";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { products as allProducts, customers as allCustomers, type OrderItem } from '@/data/mockdata';
+import { products as allProducts, customers as allCustomers, type OrderItem, type Product } from '@/data/mockdata';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+type SortConfig = {
+  key: keyof Product | null;
+  direction: 'asc' | 'desc';
+};
 
 export default function NewOrder() {
   const [prodSearch, setProdSearch] = useState('');
@@ -18,10 +23,34 @@ export default function NewOrder() {
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [dcNo, setDcNo] = useState('');
   const [poNo, setPoNo] = useState('');
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
 
   const filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(prodSearch.toLowerCase()));
   const filteredCustomers = allCustomers.filter(c => c.name.toLowerCase().includes(custSearch.toLowerCase()));
   const grandTotal = cart.reduce((s, i) => s + i.total, 0);
+
+  const requestSort = (key: keyof Product) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const key = sortConfig.key;
+    const aVal = a[key] ?? '';
+    const bVal = b[key] ?? '';
+
+    if (typeof aVal === 'string') {
+      return sortConfig.direction === 'asc' ? aVal.localeCompare(bVal as unknown as string) : (bVal as unknown as string).localeCompare(aVal);
+    }
+    if (typeof aVal === 'number') {
+      return sortConfig.direction === 'asc' ? aVal - (bVal as unknown as number) : (bVal as unknown as number) - aVal;
+    }
+    return 0;
+  });
 
   const addToCart = (productId: string, productName: string, price: number) => {
     setCart(prev => {
@@ -78,17 +107,69 @@ export default function NewOrder() {
               {/* Table Header */}
               <thead className="bg-[#27AA83] text-xs uppercase text-white border-b border-[#27AA83] h-[38px]">
                 <tr>
-                  <th className="py-3 px-3 text-left font-semibold rounded-tl-lg">Product</th>
-                  <th className="py-3 px-3 text-left font-semibold">Category</th>
-                    <th className="py-3 px-3 text-left font-semibold">Price</th>
-                    <th className="py-3 px-3 text-left font-semibold">Stock</th>
+                  <th className="py-3 px-3 text-left font-semibold rounded-tl-lg cursor-pointer select-none" onClick={() => requestSort('name')}>
+                    <div className="flex items-center gap-1">
+                      Product
+                      {sortConfig.key === 'name' ? (
+                        sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                      )}
+                    </div>
+                  </th>
+                  <th className="py-3 px-3 text-left font-semibold cursor-pointer select-none" onClick={() => requestSort('category')}>
+                    <div className="flex items-center gap-1">
+                      Category
+                      {sortConfig.key === 'category' ? (
+                        sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                      )}
+                    </div>
+                  </th>
+                  <th className="py-3 px-3 text-left font-semibold cursor-pointer select-none" onClick={() => requestSort('salePrice')}>
+                    <div className="flex items-center gap-1">
+                      Price
+                      {sortConfig.key === 'salePrice' ? (
+                        sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                      )}
+                    </div>
+                  </th>
+                  <th className="py-3 px-3 text-left font-semibold cursor-pointer select-none" onClick={() => requestSort('stock')}>
+                    <div className="flex items-center gap-1">
+                      Stock
+                      {sortConfig.key === 'stock' ? (
+                        sortConfig.direction === 'asc' ? (
+                          <ChevronUp className="w-3 h-3" />
+                        ) : (
+                          <ChevronDown className="w-3 h-3" />
+                        )
+                      ) : (
+                        <ChevronsUpDown className="w-3 h-3 opacity-40" />
+                      )}
+                    </div>
+                  </th>
                   <th className="py-3 px-3 text-left font-semibold rounded-tr-lg">Action</th>
                 </tr>
               </thead>
 
               {/* Table Body */}
               <tbody>
-                {filteredProducts.map((p) => (
+                {sortedProducts.map((p) => (
                   <tr
                     key={p.id}
                     className="border-b border-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
