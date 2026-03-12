@@ -118,13 +118,13 @@ export default function Products() {
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="page-header flex items-center justify-between">
-                <h1 className="page-title text-[18px] font-bold">Products</h1>
+            <div className="page-header flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4">
+                <h1 className="page-title text-[16px] sm:text-[18px] font-bold flex-1">Products</h1>
 
                 <Button
                     onClick={openNewProduct}
                     size="sm"
-                    className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 mt-1 text-[13px]"
+                    className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center justify-center gap-1 mt-1 text-[12px] sm:text-[13px] w-full sm:w-auto sm:flex-none"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     Add Product
@@ -322,11 +322,11 @@ export default function Products() {
                         </table>
 
                         {/* Pagination */}
-                        <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
-                            <div className="text-[13px] text-gray-700">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 py-2 border-t border-zinc-200 bg-white">
+                            <div className="text-[12px] sm:text-[13px] text-gray-700">
                                 Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
                             </div>
-                            <div className="flex items-center gap-1">
+                            <div className="flex flex-wrap items-center gap-1 justify-end sm:justify-start">
                                 <Button
                                     size="sm"
                                     disabled={currentPage === 1}

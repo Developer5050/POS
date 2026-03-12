@@ -86,14 +86,21 @@ export default function Suppliers() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="page-header flex items-center justify-between">
-        <h1 className="page-title text-[18px] font-bold mt-1">Suppliers</h1>
-        <div className="flex gap-2 justify-end items-center">
-          <Button onClick={() => setShowPurchase(true)} variant="outline" size="sm"><ShoppingBag className="w-4 h-4 mr-1 bg-[#27AA83] hover:bg-[#219a75] text-white" /> New Purchase</Button>
+      <div className="page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+        <h1 className="page-title text-[16px] sm:text-[18px] font-bold mt-1">Suppliers</h1>
+        <div className="flex flex-col gap-2 w-full sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+          <Button
+            onClick={() => setShowPurchase(true)}
+            variant="outline"
+            size="sm"
+            className="w-full sm:w-auto justify-center"
+          >
+            <ShoppingBag className="w-4 h-4 mr-1" /> New Purchase
+          </Button>
           <Button
             onClick={openNew}
             size="sm"
-            className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center"
+            className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center justify-center w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-1" /> Add Supplier
           </Button>
@@ -173,11 +180,11 @@ export default function Suppliers() {
         </table>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
-          <div className="text-[13px] text-gray-700">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 py-2 border-t border-zinc-200 bg-white">
+          <div className="text-[12px] sm:text-[13px] text-gray-700">
             Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1 justify-end sm:justify-start">
             <Button
               size="sm"
               disabled={currentPage === 1}

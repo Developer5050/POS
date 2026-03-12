@@ -68,7 +68,7 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <motion.div
         variants={item}
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 mt-4"
+        className="grid grid-cols-1 min-[375px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 mt-4"
       >
         {stats.map((s) => (
           <div
@@ -233,11 +233,11 @@ export default function Dashboard() {
           </table>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white dark:bg-zinc-900">
-            <div className="text-[13px] text-gray-700 dark:text-gray-300">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 py-2 border-t border-zinc-200 bg-white dark:bg-zinc-900">
+            <div className="text-[12px] sm:text-[13px] text-gray-700 dark:text-gray-300">
               Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1 justify-end sm:justify-start">
               <Button
                 size="sm"
                 disabled={currentPage === 1}

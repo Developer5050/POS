@@ -212,11 +212,11 @@ export default function NewOrder() {
             </table>
 
             {/* Pagination */}
-            <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
-              <div className="text-[13px] text-gray-700">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 py-2 border-t border-zinc-200 bg-white">
+              <div className="text-[12px] sm:text-[13px] text-gray-700">
                 Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1 justify-end sm:justify-start">
                 <Button
                   size="sm"
                   disabled={currentPage === 1}
@@ -262,12 +262,12 @@ export default function NewOrder() {
                 {cart.map(item => (
                   <div
                     key={item.productId}
-                    className="flex items-center justify-between p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800 transition border-b border-zinc-200 dark:border-zinc-700"
+                    className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 p-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800 transition border-b border-zinc-200 dark:border-zinc-700"
                   >
                     {/* Product Info */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-200">
-                        {item.productName}
+                        <span className="block truncate">{item.productName}</span>
                       </p>
                       {/* <p className="text-xs text-muted-foreground mt-0.5">
                         ${item.price} each
@@ -275,7 +275,8 @@ export default function NewOrder() {
                     </div>
 
                     {/* Qty Controls */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto justify-between sm:justify-end">
+                      <div className="flex items-center gap-2">
 
                       <button
                         onClick={() => updateQty(item.productId, -1)}
@@ -294,16 +295,17 @@ export default function NewOrder() {
                       >
                         <Plus className="w-3 h-3" />
                       </button>
+                      </div>
 
                       {/* Item Total */}
-                      <span className="w-16 text-right text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                      <span className="w-auto min-w-16 text-right text-sm font-semibold text-zinc-800 dark:text-zinc-200 tabular-nums">
                         ${item.total.toFixed(2)}
                       </span>
 
                       {/* Remove */}
                       <button
                         onClick={() => removeFromCart(item.productId)}
-                        className="p-1.5 rounded-md hover:bg-red-50 transition cursor-pointer"
+                        className="p-1.5 rounded-md hover:bg-red-50 transition cursor-pointer flex-shrink-0"
                       >
                         <TooltipProvider>
                              <Tooltip>
@@ -322,11 +324,11 @@ export default function NewOrder() {
 
                 {/* Total */}
                 <div className="flex justify-between items-center pt-3 mt-2 border-t border-zinc-200 dark:border-zinc-700">
-                  <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="text-[13px] font-semibold text-muted-foreground dark:text-zinc-300">
                     Grand Total
                   </span>
 
-                  <span className="text-lg font-bold text-[#27AA83]">
+                  <span className="text-[16px] font-bold text-[#27AA83]">
                     ${grandTotal.toFixed(2)}
                   </span>
                 </div>
@@ -401,21 +403,24 @@ export default function NewOrder() {
 
           <div className="stat-card bg-white dark:bg-zinc-900 rounded-lg p-4 shadow-sm border border-zinc-200 dark:border-zinc-700 mt-3">
             <div className="flex justify-between text-[13px] mb-2">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-zinc-800 dark:text-zinc-200">Subtotal</span>
               <span>${grandTotal.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between text-[13px] font-bold border-t border-zinc-200 dark:border-zinc-700 pt-2">
-              <span>Grand Total</span>
+              <span className="text-zinc-800 dark:text-zinc-200">Grand Total</span>
               <span className="text-[#27AA83]">${grandTotal.toFixed(2)}</span>
             </div>
 
             <Button
-              className="w-full mt-4 bg-[#27AA83] hover:bg-[#219a75] text-white"
+              className="w-full mt-4 bg-[#27AA83] hover:bg-[#219a75] text-white h-auto py-3 flex flex-col items-center justify-center gap-0.5"
               onClick={saveOrder}
               disabled={cart.length === 0}
             >
-              Save Order & Generate Invoice
+              <span className="text-[13px] font-semibold leading-none">Save Order</span>
+              <span className="text-[13px] font-medium leading-none opacity-90">
+                & Generate Invoice
+              </span>
             </Button>
           </div>
         </div>

@@ -236,11 +236,11 @@ export default function Invoices() {
         </table>
 
         {/* Pagination */}
-        <div className="flex justify-between items-center px-4 py-2 border-t border-zinc-200 bg-white">
-          <div className="text-[13px] text-gray-700">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 px-4 py-2 border-t border-zinc-200 bg-white">
+          <div className="text-[12px] sm:text-[13px] text-gray-700">
             Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1 justify-end sm:justify-start">
             <Button
               size="sm"
               disabled={currentPage === 1}
