@@ -68,7 +68,7 @@ export default function Dashboard() {
       {/* Stats Grid */}
       <motion.div
         variants={item}
-        className="grid grid-cols-1 min-[375px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 mt-4"
+        className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 mb-6 mt-4"
       >
         {stats.map((s) => (
           <div

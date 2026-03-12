@@ -29,7 +29,7 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
   return (
     <aside
       className={`bg-[#020b1a] dark:bg-[#020b1a] h-screen fixed top-0 left-0 transition-all duration-300 overflow-y-auto ${
-        collapsed ? "w-16" : "w-56 md:w-[18%]"
+        collapsed ? "w-16" : "w-44 sm:w-48 md:w-[22%] lg:w-[18%]"
       }`}
     >
       <div className="flex flex-col h-full overflow-hidden">

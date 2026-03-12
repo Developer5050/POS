@@ -28,7 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <div
         className={`flex flex-col transition-all duration-300 h-screen overflow-hidden flex-1 ${
-          sidebarCollapsed ? "ml-16" : "ml-56 md:ml-[18%]"
+          sidebarCollapsed ? "ml-16" : "ml-44 sm:ml-48 md:ml-[22%] lg:ml-[18%]"
         }`}
       >
         <Navbar onMenuClick={toggleSidebar} collapsed={sidebarCollapsed} />
