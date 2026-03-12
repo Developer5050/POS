@@ -40,12 +40,12 @@ export default function SignIn() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-2">
             <div className="w-full max-w-md">
-                <div className="stat-card bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+                <div className="stat-card bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-300 dark:border-gray-600 p-6">
 
                     {/* Header */}
-                    <div className="mb-8 text-center">
+                    <div className="mb-3 text-center">
                         <div className="flex items-center justify-center gap-2 mb-1">
                             <div className="bg-[#27AA83] p-2 rounded-md">
                                 <Home className="w-5 h-5 text-white" />
@@ -55,13 +55,13 @@ export default function SignIn() {
                             </span>
                         </div>
 
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p className="text-gray-600 dark:text-gray-400 text-[15px]">
                             Sign in to your account
                         </p>
                     </div>
 
                     {/* Sign In Form */}
-                    <form onSubmit={handleSignIn}>
+                    <form onSubmit={handleSignIn} className="space-y-3">
 
                         {/* Name Field */}
                         <div className="mb-4">
@@ -175,7 +175,7 @@ export default function SignIn() {
 
                             <Link
                                 href="/forgot-password"
-                                className="text-[13px] text-[#27AA83] hover:text-[#209a75] hover:underline underline-offset-2 decoration-[#27AA83] font-medium transition-colors"
+                                className="text-[13px] text-[#27AA83] hover:text-[#209a75] hover:underline underline-offset-2 decoration-[#27AA83] font-semibold transition-colors"
                             >
                                 Forgot Password?
                             </Link>
@@ -199,7 +199,7 @@ export default function SignIn() {
                         </div>
 
                         {/* Social Login */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-3">
                             {/* Google */}
                             <button
                                 type="button"
@@ -211,36 +211,18 @@ export default function SignIn() {
                                     Google
                                 </span>
                             </button>
-
-                            {/* Facebook */}
-                            <button
-                                type="button"
-                                onClick={handleFacebookSignIn}
-                                className="flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                            >
-                                <svg
-                                    className="w-5 h-5 text-[#27AA83]"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                </svg>
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">
-                                    Facebook
-                                </span>
-                            </button>
                         </div>
 
                         {/* Sign Up */}
-                        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+                        {/* <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
                             Don't have an account?{" "}
                             <Link
                                 href="/signup"
-                                className="text-[#27AA83] hover:text-[#209a75] font-semibold transition-colors"
+                                className="text-[13px] text-[#27AA83] hover:text-[#209a75] hover:underline underline-offset-2 decoration-[#27AA83] font-semibold transition-colors"
                             >
                                 Sign Up
                             </Link>
-                        </p>
+                        </p> */}
 
                     </form>
                 </div>
