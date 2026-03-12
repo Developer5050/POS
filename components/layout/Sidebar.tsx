@@ -28,8 +28,9 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
 
   return (
     <aside
-      className={`bg-[#020b1a] dark:bg-[#020b1a] h-screen fixed top-0 left-0 transition-all duration-300 overflow-y-auto`}
-      style={{ width: collapsed ? "5%" : "18%" }}
+      className={`bg-[#020b1a] dark:bg-[#020b1a] h-screen fixed top-0 left-0 transition-all duration-300 overflow-y-auto ${
+        collapsed ? "w-16" : "w-56 md:w-[18%]"
+      }`}
     >
       <div className="flex flex-col h-full overflow-hidden">
 
@@ -58,7 +59,9 @@ const Sidebar = ({ collapsed = false }: SidebarProps) => {
                 <li key={item.name} className="relative group overflow-visible">
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-4 p-2 rounded-md text-[#C5CAD3] text-[13px] cursor-pointer transition-colors duration-200
+                    className={`flex items-center gap-4 p-2 rounded-md text-[#C5CAD3] text-[13px] cursor-pointer transition-colors duration-200 ${
+                      collapsed ? "justify-center gap-0" : ""
+                    }
                     ${isActive ? "bg-[#27AA83] text-white" : "hover:bg-[#1a253a]"}`}
                   >
                     <Icon className="text-lg" />

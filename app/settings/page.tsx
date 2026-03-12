@@ -32,15 +32,21 @@ export default function SettingsPage() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="page-header flex items-center justify-between">
-        <h1 className="page-title text-[18px] font-bold mt-1">Settings</h1>
-        <Button onClick={save} size="sm" className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 text-[13px] mt-1"><Save className="w-4 h-4 mr-1" /> Save Settings</Button>
+      <div className="page-header flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4">
+        <h1 className="page-title text-[16px] sm:text-[18px] font-bold mt-1 flex-1">Settings</h1>
+        <Button
+          onClick={save}
+          size="sm"
+          className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center justify-center gap-1 text-[12px] sm:text-[13px] mt-1 w-full sm:w-auto sm:flex-none"
+        >
+          <Save className="w-4 h-4 mr-1" /> Save Settings
+        </Button>
       </div>
 
-      <Tabs defaultValue="business" className="w-full">
+      <Tabs defaultValue="business" className="w-full mt-3 sm:mt-4">
 
         {/* Tabs Header */}
-        <TabsList className="mb-4 flex gap-4 justify-start">
+        <TabsList className="mb-4 flex gap-3 sm:gap-4 justify-start overflow-x-auto whitespace-nowrap">
           <TabsTrigger
             value="business"
             className="relative text-[14px] font-semibold text-gray-700 

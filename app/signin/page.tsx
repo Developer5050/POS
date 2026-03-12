@@ -40,12 +40,12 @@ export default function SignIn() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-2">
-            <div className="w-full max-w-md">
+        <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-3 py-4 sm:px-4">
+            <div className="w-full max-w-md mx-auto">
                 <div className="stat-card bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-300 dark:border-gray-600 p-6">
 
                     {/* Header */}
-                    <div className="mb-3 text-center">
+                        <div className="mb-4 text-center">
                         <div className="flex items-center justify-center gap-2 mb-1">
                             <div className="bg-[#27AA83] p-2 rounded-md">
                                 <Home className="w-5 h-5 text-white" />
@@ -55,7 +55,7 @@ export default function SignIn() {
                             </span>
                         </div>
 
-                        <p className="text-gray-600 dark:text-gray-400 text-[15px]">
+                        <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-[15px]">
                             Sign in to your account
                         </p>
                     </div>
@@ -64,7 +64,7 @@ export default function SignIn() {
                     <form onSubmit={handleSignIn} className="space-y-3">
 
                         {/* Name Field */}
-                        <div className="mb-4">
+                        <div className="mb-3 sm:mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-0.5">
                                 Full Name
                             </label>
@@ -82,7 +82,7 @@ export default function SignIn() {
                         </div>
 
                         {/* Email Field */}
-                        <div className="mb-4">
+                        <div className="mb-3 sm:mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-0.5">
                                 Email Address
                             </label>
@@ -100,7 +100,7 @@ export default function SignIn() {
                         </div>
 
                         {/* Password Field */}
-                        <div className="mb-4">
+                        <div className="mb-3 sm:mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-0.5">
                                 Password
                             </label>
@@ -129,7 +129,7 @@ export default function SignIn() {
                         </div>
 
                         {/* Confirm Password Field */}
-                        <div className="mb-4">
+                        <div className="mb-3 sm:mb-4">
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-0.5">
                                 Confirm Password
                             </label>
@@ -160,25 +160,27 @@ export default function SignIn() {
                         </div>
 
                         {/* Remember Me & Forgot Password */}
-                        <div className="flex items-center justify-between mb-6">
-                            <label className="flex items-center gap-2 cursor-pointer">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
+                            <label className="flex items-center gap-1.5 sm:gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={rememberMe}
                                     onChange={(e) => setRememberMe(e.target.checked)}
                                     className="w-3 h-3 border border-gray-300 rounded bg-white dark:bg-gray-700 dark:border-gray-600 cursor-pointer accent-[#27AA83]"
                                 />
-                                <span className="text-sm text-gray-700 dark:text-gray-300">
+                                <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                                     Remember me
                                 </span>
                             </label>
 
-                            <Link
-                                href="/forgot-password"
-                                className="text-[13px] text-[#27AA83] hover:text-[#209a75] hover:underline underline-offset-2 decoration-[#27AA83] font-semibold transition-colors"
-                            >
-                                Forgot Password?
-                            </Link>
+                            <div className="w-full xs:w-auto text-right">
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-xs sm:text-[13px] text-[#27AA83] hover:text-[#209a75] hover:underline underline-offset-2 decoration-[#27AA83] font-semibold transition-colors"
+                                >
+                                    Forgot Password?
+                                </Link>
+                            </div>
                         </div>
 
                         {/* Sign In Button */}

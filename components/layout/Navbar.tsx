@@ -31,11 +31,9 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, collapsed = false }) => {
 
   return (
     <header
-      className={`bg-zinc-50 dark:bg-black h-16 fixed top-0 z-10 shadow transition-all duration-300`}
-      style={{
-        left: collapsed ? "5%" : "18%",
-        right: 0,
-      }}
+      className={`bg-zinc-50 dark:bg-black h-16 fixed top-0 z-10 shadow transition-all duration-300 right-0 ${
+        collapsed ? "left-16" : "left-56 md:left-[18%]"
+      }`}
     >
       <div className="flex items-center justify-between h-full px-4">
         {/* LEFT SIDE */}
