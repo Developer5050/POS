@@ -60,12 +60,12 @@ export default function Employees() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       {/* Header */}
-      <div className="page-header flex items-center justify-between">
-        <h1 className="page-title text-[18px] font-bold mt-1">Employees</h1>
+      <div className="page-header flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4">
+        <h1 className="page-title text-[16px] sm:text-[18px] font-bold mt-1 flex-1">Employees</h1>
         <Button
           onClick={openNew}
           size="sm"
-          className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center gap-1 text-[13px] mt-1"
+          className="bg-[#27AA83] hover:bg-[#219a75] text-white flex items-center justify-center gap-1 text-[12px] sm:text-[13px] mt-1 w-full sm:w-auto sm:flex-none"
         >
           <Plus className="w-4 h-4" /> Add Employee
         </Button>
